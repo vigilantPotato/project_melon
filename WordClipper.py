@@ -20,9 +20,9 @@ class WordClip(tkinter.LabelFrame):
     #ボタンの表示名とクリップボードにコピーする文字列のタプルを登録
     #3番目にボタンクリック時にブラウザで開くアドレスを登録。但し、nolinkの場合はクリップボードへのコピーのみ。
     word_list = [
-        ['aaa', 'AAA', 'https://www.google.com'],
-        ['bbb', 'BBB', 'https://www.yahoo.com'],
-        ['ccc', 'CCC', 'nolink'],
+        ['Google', 'Google!Google!Google!', 'https://www.google.com'],
+        ['Yahoo', 'Yahoo!Yahoo!Yahoo!', 'https://www.yahoo.com'],
+        ['nolink', 'nolink!nolink!nolink!', 'nolink'],
         ]
     
     def __init__(self, master=None):
