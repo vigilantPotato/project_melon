@@ -1,12 +1,13 @@
 #WordClipper.py
 '''
 ボタンを押すとクリップボードに指定した文字列をコピーするアプリ
-tkinterとpyperclipを使用
+リンク先を登録しておくと、クリックと同時にブラウザでリンク先を開く
+tkinter、pyperclip、webbrowserを使用
 '''
 
 import tkinter
 import pyperclip
-import webbrowser
+import webbrowser   #new
 
 class WordClip(tkinter.LabelFrame):
     '''
@@ -51,6 +52,7 @@ class WordClip(tkinter.LabelFrame):
         for title in self.word_list:
             if title[0] == event.widget["text"]:
                 pyperclip.copy(title[1])
+                #nolink以外のとき、アドレスをブラウザで開く
                 if title[2] != 'nolink':
                     webbrowser.open(title[2])
 
