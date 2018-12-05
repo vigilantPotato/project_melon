@@ -2,12 +2,14 @@
 '''
 ボタンを押すとクリップボードに指定した文字列をコピーするアプリ
 リンク先を登録しておくと、クリックと同時にブラウザでリンク先を開く
-tkinter、pyperclip、webbrowserを使用
+tkinter, pyperclip, webbrowser, os, csvを使用
 '''
 
 import tkinter
 import pyperclip
-import webbrowser   #new
+import webbrowser
+import os   #new
+import csv  #new
 
 class WordClip(tkinter.LabelFrame):
     '''
@@ -16,21 +18,23 @@ class WordClip(tkinter.LabelFrame):
         ボタンを生成するメソッド
     word_clip:
         ボタンが押したときに実行されるメソッド
+    get_word_list:
+        同じフォルダ内のword_list.csvを開き、文字列を読み出すメソッド
     '''
 
-    #ボタンの表示名とクリップボードにコピーする文字列のタプルを登録
-    #3番目にボタンクリック時にブラウザで開くアドレスを登録。但し、nolinkの場合はクリップボードへのコピーのみ。
-    word_list = [
-        ['Google', 'Google!Google!Google!', 'https://www.google.com'],
-        ['Yahoo', 'Yahoo!Yahoo!Yahoo!', 'https://www.yahoo.com'],
-        ['nolink', 'nolink!nolink!nolink!', 'nolink'],
-        ]
+    '''
+    ボタンの表示名とクリップボードにコピーする文字列のタプルを登録
+    3番目にボタンクリック時にブラウザで開くアドレスを登録。但し、nolinkの場合はクリップボードへのコピーのみ。
+    ここでは空のクラス変数を宣言しておき、get_word_listメソッドで同じフォルダにあるcsvファイルからデータを読み込む。
+    '''
+    word_list = []
     
     def __init__(self, master=None):
         '''
         オブジェクト生成時に実行
         '''
         super().__init__(master, text='clip words', padx=5)
+        self.get_word_list()    #new
         self.create_widgets()
     
     def create_widgets(self):
@@ -55,6 +59,17 @@ class WordClip(tkinter.LabelFrame):
                 #nolink以外のとき、アドレスをブラウザで開く
                 if title[2] != 'nolink':
                     webbrowser.open(title[2])
+    
+    #new
+    def get_word_list(self):
+        '''
+        同じフォルダにあるword_list.csvから文字列を読み出し、クラス変数word_listに格納する。
+        '''
+        filename = os.path.join(os.getcwd(), 'word_list.csv')
+        open_file = open(filename)
+        file_reader = csv.reader(open_file)
+        for row in file_reader:
+            self.word_list.append(row)
 
 if __name__ == '__main__':
     root = tkinter.Tk()
