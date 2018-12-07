@@ -129,7 +129,7 @@ class WordClip(tkinter.LabelFrame):
         self.renew_CSV()
 
         #すべてのボタンウィジェットを削除
-        self.destroy_widgets
+        self.destroy_widgets()
 
         #create_widgetsを実行してボタンウィジェットを再生成
         self.create_widgets()
