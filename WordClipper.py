@@ -47,7 +47,7 @@ class WordClip(tkinter.LabelFrame):
             self.button_widget(word[0])
         
         #create_newボタンを生成
-        self.button_widget('create new')
+        self.button_widget('create new', bg='lightyellow')
 
     def word_clip(self, event):
         '''
@@ -83,11 +83,11 @@ class WordClip(tkinter.LabelFrame):
         '''
         pass
     
-    def button_widget(self, title):
+    def button_widget(self, title, bg='lightblue'):
         '''
         ボタンウィジェットを生成するメソッド
         '''
-        b = tkinter.Button(self, text=title, width=20)
+        b = tkinter.Button(self, text=title, width=20, bg=bg)
         b.bind("<ButtonRelease-1>", self.word_clip)
         b.pack()
 
