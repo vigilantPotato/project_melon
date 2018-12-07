@@ -34,7 +34,7 @@ class WordClip(tkinter.LabelFrame):
         オブジェクト生成時に実行
         '''
         super().__init__(master, text='clip words', padx=5)
-        self.get_word_list()    #new
+        self.get_word_list()
         self.create_widgets()
     
     def create_widgets(self):
@@ -42,25 +42,31 @@ class WordClip(tkinter.LabelFrame):
         ボタンウィジェットを生成
         ボタンを押すと、word_clipメソッドを実行
         '''
+        #word_listに登録されたボタンを生成
         for word in self.word_list:
-            b = tkinter.Button(self, text=word[0], width=20)
-            b.bind("<ButtonRelease-1>", self.word_clip)
-            b.pack()
+            self.button_widget(word[0])
+        
+        #create_newボタンを生成
+        self.button_widget('create new')
 
     def word_clip(self, event):
         '''
         ボタンのタイトルをword_list内から検索し、
         対応する文字列をクリップボードにコピー
-        アドレス
+        アドレスがnolinkではない場合、ブラウザで開く
+        crate newボタンを押した場合はcreate_newメソッドを実行
         '''
-        for title in self.word_list:
-            if title[0] == event.widget["text"]:
-                pyperclip.copy(title[1])
-                #nolink以外のとき、アドレスをブラウザで開く
-                if title[2] != 'nolink':
-                    webbrowser.open(title[2])
+
+        if event.widget["text"] == 'create new':
+            self.create_new()
+        else:
+            for title in self.word_list:
+                if title[0] == event.widget["text"]:
+                    pyperclip.copy(title[1])
+                    #nolink以外のとき、アドレスをブラウザで開く
+                    if title[2] != 'nolink':
+                        webbrowser.open(title[2])
     
-    #new
     def get_word_list(self):
         '''
         同じフォルダにあるword_list.csvから文字列を読み出し、クラス変数word_listに格納する。
@@ -70,6 +76,20 @@ class WordClip(tkinter.LabelFrame):
         file_reader = csv.reader(open_file)
         for row in file_reader:
             self.word_list.append(row)
+
+    def create_new(self):
+        '''
+        新規にword_listに追記するメソッド
+        '''
+        pass
+    
+    def button_widget(self, title):
+        '''
+        ボタンウィジェットを生成するメソッド
+        '''
+        b = tkinter.Button(self, text=title, width=20)
+        b.bind("<ButtonRelease-1>", self.word_clip)
+        b.pack()
 
 if __name__ == '__main__':
     root = tkinter.Tk()
