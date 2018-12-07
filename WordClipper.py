@@ -8,8 +8,9 @@ tkinter, pyperclip, webbrowser, os, csvを使用
 import tkinter
 import pyperclip
 import webbrowser
-import os   #new
-import csv  #new
+import os
+import csv
+import tkinter.simpledialog #new
 
 class WordClip(tkinter.LabelFrame):
     '''
@@ -23,11 +24,15 @@ class WordClip(tkinter.LabelFrame):
     '''
 
     '''
-    ボタンの表示名とクリップボードにコピーする文字列のタプルを登録
-    3番目にボタンクリック時にブラウザで開くアドレスを登録。但し、nolinkの場合はクリップボードへのコピーのみ。
-    ここでは空のクラス変数を宣言しておき、get_word_listメソッドで同じフォルダにあるcsvファイルからデータを読み込む。
+    ボタンの表示名とクリップボードにコピーする文字列のリストを登録
+    3番目にボタンクリック時にブラウザで開くアドレスを登録。
+    但し、nolinkの場合はクリップボードへのコピーのみ。
+    ここでは空のクラス変数を宣言しておき、get_word_listメソッドで
+    同じフォルダにあるcsvファイルからデータを読み込む。
+    ウィジェットの生成、破壊のために、ウィジェットのリストを追加
     '''
     word_list = []
+    widget_list = [] #new
     
     def __init__(self, master=None):
         '''
@@ -80,8 +85,40 @@ class WordClip(tkinter.LabelFrame):
     def create_new(self):
         '''
         新規にword_listに追記するメソッド
+        タイトル、コピーする文字列、リンク先を入力し、CSVファイルを更新
+        最後に、ボタンウィジェットを破壊&再生成する
         '''
-        pass
+
+        #タイトルを入力
+        title = tkinter.simpledialog.askstring('input title', 'please input title')
+        if(title == ''):
+            return
+
+        #コピーする文字列を入力
+        clip_word = tkinter.simpledialog.askstring('input clipword', 'please input clipword')
+        if(clip_word == ''):
+            return
+        
+        #リンク先を入力
+        link = tkinter.simpledialog.askstring('input URL', 'please input URL')
+        if(link == None or link == ''):
+            link = 'nolink'
+        
+        #CSVファイルを更新
+        self.word_list.append([title, clip_word, link])
+        filename = os.path.join(os.getcwd(), 'word_list.csv')
+        open_file = open(filename, 'w', newline='')
+        output_writer = csv.writer(open_file)
+        for words in self.word_list:
+            output_writer.writerow(words)
+        open_file.close()
+
+        #すべてのボタンウィジェットを削除
+        for d in self.widget_list:
+            d.destroy()
+
+        #create_widgetsを実行してボタンウィジェットを再生成
+        self.create_widgets()
     
     def button_widget(self, title, bg='lightblue'):
         '''
@@ -90,6 +127,7 @@ class WordClip(tkinter.LabelFrame):
         b = tkinter.Button(self, text=title, width=20, bg=bg)
         b.bind("<ButtonRelease-1>", self.word_clip)
         b.pack()
+        self.widget_list.append(b)
 
 if __name__ == '__main__':
     root = tkinter.Tk()
