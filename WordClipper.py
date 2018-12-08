@@ -21,6 +21,10 @@ class WordClip(tkinter.LabelFrame):
         ボタンが押したときに実行されるメソッド
     get_word_list:
         同じフォルダ内のword_list.csvを開き、文字列を読み出すメソッド
+    create_new:
+        新規のボタンを登録するメソッド
+    button_widget:
+        ボタンを生成するメソッド
     '''
 
     '''
@@ -30,15 +34,17 @@ class WordClip(tkinter.LabelFrame):
     ここでは空のクラス変数を宣言しておき、get_word_listメソッドで
     同じフォルダにあるcsvファイルからデータを読み込む。
     ウィジェットの生成、破壊のために、ウィジェットのリストを追加
+    　→インスタンス変数に変更
     '''
+
     word_list = []
-    widget_list = [] #new
     
     def __init__(self, master=None):
         '''
         オブジェクト生成時に実行
         '''
         super().__init__(master, text='clip words', padx=5)
+        self.widget_list = []
         self.get_word_list()
         self.create_widgets()
     
@@ -54,6 +60,12 @@ class WordClip(tkinter.LabelFrame):
         #create_newボタンを生成
         self.button_widget('create new', bg='lightyellow')
 
+        #deleteチェックボタンを生成
+        self.var = tkinter.IntVar()
+        check = tkinter.Checkbutton(self, text="delete button", variable=self.var)
+        check.pack(anchor=tkinter.W, padx=5)
+        self.widget_list.append(check)
+
     def word_clip(self, event):
         '''
         ボタンのタイトルをword_list内から検索し、
@@ -62,15 +74,23 @@ class WordClip(tkinter.LabelFrame):
         crate newボタンを押した場合はcreate_newメソッドを実行
         '''
 
+        #deleteチェックボタンにチェックが入っている場合
+        if self.var.get() == 1:
+            self.delete_clip_button(event.widget["text"])
+            return
+        
+        #create newボタンを押した場合
         if event.widget["text"] == 'create new':
             self.create_new()
-        else:
-            for title in self.word_list:
-                if title[0] == event.widget["text"]:
-                    pyperclip.copy(title[1])
-                    #nolink以外のとき、アドレスをブラウザで開く
-                    if title[2] != 'nolink':
-                        webbrowser.open(title[2])
+            return
+        
+        #クリップボタンを押した場合
+        for title in self.word_list:
+            if title[0] == event.widget["text"]:
+                pyperclip.copy(title[1])
+                #nolink以外のとき、アドレスをブラウザで開く
+                if title[2] != 'nolink':
+                    webbrowser.open(title[2])
     
     def get_word_list(self):
         '''
@@ -106,16 +126,10 @@ class WordClip(tkinter.LabelFrame):
         
         #CSVファイルを更新
         self.word_list.append([title, clip_word, link])
-        filename = os.path.join(os.getcwd(), 'word_list.csv')
-        open_file = open(filename, 'w', newline='')
-        output_writer = csv.writer(open_file)
-        for words in self.word_list:
-            output_writer.writerow(words)
-        open_file.close()
+        self.renew_CSV()
 
         #すべてのボタンウィジェットを削除
-        for d in self.widget_list:
-            d.destroy()
+        self.destroy_widgets()
 
         #create_widgetsを実行してボタンウィジェットを再生成
         self.create_widgets()
@@ -128,6 +142,36 @@ class WordClip(tkinter.LabelFrame):
         b.bind("<ButtonRelease-1>", self.word_clip)
         b.pack()
         self.widget_list.append(b)
+    
+    def delete_clip_button(self, title):
+        '''
+        CSVファイルからtitleと一致する行を削除しするメソッド
+        '''
+        for i, word in enumerate(self.word_list):
+            if word[0] == title:
+                del self.word_list[i]
+                break
+        self.renew_CSV()
+
+        self.destroy_widgets()
+        self.create_widgets()
+
+    def renew_CSV(self):
+        '''
+        word_listをCSVファイルに保存するメソッド
+        '''
+        filename = os.path.join(os.getcwd(), 'word_list.csv')
+        open_file = open(filename, 'w', newline='')
+        output_writer = csv.writer(open_file)
+        for words in self.word_list:
+            output_writer.writerow(words)
+        open_file.close()
+
+    def destroy_widgets(self):
+        for d in self.widget_list:
+            d.destroy()
+        self.widget_list = []
+
 
 if __name__ == '__main__':
     root = tkinter.Tk()
