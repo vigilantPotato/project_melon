@@ -1,4 +1,4 @@
-#WordClipper.py
+#python3.6.6
 '''
 ボタンを押すとクリップボードに指定した文字列をコピーするアプリ
 リンク先を登録しておくと、クリックと同時にブラウザでリンク先を開く
@@ -10,7 +10,7 @@ import pyperclip
 import webbrowser
 import os
 import csv
-import tkinter.simpledialog #new
+import tkinter.simpledialog
 
 class WordClip(tkinter.LabelFrame):
     '''
@@ -37,13 +37,12 @@ class WordClip(tkinter.LabelFrame):
     　→インスタンス変数に変更
     '''
 
-    word_list = []
-    
     def __init__(self, master=None):
         '''
         オブジェクト生成時に実行
         '''
         super().__init__(master, text='clip words', padx=5)
+        self.word_list = []
         self.widget_list = []
         self.get_word_list()
         self.create_widgets()
@@ -62,9 +61,7 @@ class WordClip(tkinter.LabelFrame):
 
         #deleteチェックボタンを生成
         self.var = tkinter.IntVar()
-        check = tkinter.Checkbutton(self, text="delete button", variable=self.var)
-        check.pack(anchor=tkinter.W, padx=5)
-        self.widget_list.append(check)
+        self.check_button(title='delete button', var=self.var)
 
     def word_clip(self, event):
         '''
@@ -72,6 +69,8 @@ class WordClip(tkinter.LabelFrame):
         対応する文字列をクリップボードにコピー
         アドレスがnolinkではない場合、ブラウザで開く
         crate newボタンを押した場合はcreate_newメソッドを実行
+        deleteチェックボックスにチェックがある場合は
+        delete_clip_buttonを実行して押したボタンを削除
         '''
 
         #deleteチェックボタンにチェックが入っている場合
@@ -143,6 +142,14 @@ class WordClip(tkinter.LabelFrame):
         b.pack()
         self.widget_list.append(b)
     
+    def check_button(self, title, var, command=None):
+        '''
+        チェックボタンウィジェットを生成するメソッド
+        '''
+        check = tkinter.Checkbutton(self, text=title, variable=var, command=command)
+        check.pack(anchor=tkinter.W, padx=5)
+        self.widget_list.append(check)
+
     def delete_clip_button(self, title):
         '''
         CSVファイルからtitleと一致する行を削除しするメソッド
@@ -152,26 +159,25 @@ class WordClip(tkinter.LabelFrame):
                 del self.word_list[i]
                 break
         self.renew_CSV()
-
         self.destroy_widgets()
         self.create_widgets()
 
     def renew_CSV(self):
         '''
         word_listをCSVファイルに保存するメソッド
+        ファイルの存在確認を追加
         '''
         filename = os.path.join(os.getcwd(), 'word_list.csv')
-        open_file = open(filename, 'w', newline='')
-        output_writer = csv.writer(open_file)
-        for words in self.word_list:
-            output_writer.writerow(words)
-        open_file.close()
+        if os.path.exists(filename):
+            open_file = open(filename, 'w', newline='')
+            output_writer = csv.writer(open_file)
+            for words in self.word_list:
+                output_writer.writerow(words)
 
     def destroy_widgets(self):
         for d in self.widget_list:
             d.destroy()
         self.widget_list = []
-
 
 if __name__ == '__main__':
     root = tkinter.Tk()
