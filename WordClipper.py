@@ -1,4 +1,4 @@
-#WordClipper.py
+#python3.6.6
 '''
 ボタンを押すとクリップボードに指定した文字列をコピーするアプリ
 リンク先を登録しておくと、クリックと同時にブラウザでリンク先を開く
@@ -37,13 +37,12 @@ class WordClip(tkinter.LabelFrame):
     　→インスタンス変数に変更
     '''
 
-    word_list = []
-    
     def __init__(self, master=None):
         '''
         オブジェクト生成時に実行
         '''
         super().__init__(master, text='clip words', padx=5)
+        self.word_list = []
         self.widget_list = []
         self.get_word_list()
         self.create_widgets()
