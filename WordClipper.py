@@ -62,9 +62,11 @@ class WordClip(tkinter.LabelFrame):
 
         #deleteチェックボタンを生成
         self.var = tkinter.IntVar()
-        check = tkinter.Checkbutton(self, text="delete button", variable=self.var)
-        check.pack(anchor=tkinter.W, padx=5)
-        self.widget_list.append(check)
+        self.check_button(title='delete button', var=self.var)
+
+        #swapチェックボタンを生成
+        self.var2 = tkinter.IntVar()
+        self.check_button(title='swap button', var=self.var2)
 
     def word_clip(self, event):
         '''
@@ -72,6 +74,8 @@ class WordClip(tkinter.LabelFrame):
         対応する文字列をクリップボードにコピー
         アドレスがnolinkではない場合、ブラウザで開く
         crate newボタンを押した場合はcreate_newメソッドを実行
+        deleteチェックボックスにチェックがある場合は
+        delete_clip_buttonを実行して押したボタンを削除
         '''
 
         #deleteチェックボタンにチェックが入っている場合
@@ -143,6 +147,14 @@ class WordClip(tkinter.LabelFrame):
         b.pack()
         self.widget_list.append(b)
     
+    def check_button(self, title, var, command=None):
+        '''
+        チェックボタンウィジェットを生成するメソッド
+        '''
+        check = tkinter.Checkbutton(self, text=title, variable=var, command=command)
+        check.pack(anchor=tkinter.W, padx=5)
+        self.widget_list.append(check)
+
     def delete_clip_button(self, title):
         '''
         CSVファイルからtitleと一致する行を削除しするメソッド
@@ -155,6 +167,9 @@ class WordClip(tkinter.LabelFrame):
 
         self.destroy_widgets()
         self.create_widgets()
+
+    def swap_clip_button(self, title):
+        pass
 
     def renew_CSV(self):
         '''
