@@ -42,9 +42,6 @@ class WordClip(tkinter.LabelFrame):
         オブジェクト生成時に実行
         '''
         super().__init__(master, text='clip words', padx=5)
-        self.word_list = []
-        self.widget_list = []
-        self.get_word_list()
         self.create_widgets()
     
     def create_widgets(self):
@@ -52,6 +49,13 @@ class WordClip(tkinter.LabelFrame):
         ボタンウィジェットを生成
         ボタンを押すと、word_clipメソッドを実行
         '''
+
+        #word_list, widget_listのクリア
+        self.word_list = []
+        self.widget_list = []
+
+        self.get_word_list()
+
         #word_listに登録されたボタンを生成
         for word in self.word_list:
             self.button_widget(word[0])
@@ -96,10 +100,11 @@ class WordClip(tkinter.LabelFrame):
         同じフォルダにあるword_list.csvから文字列を読み出し、クラス変数word_listに格納する。
         '''
         filename = os.path.join(os.getcwd(), 'word_list.csv')
-        open_file = open(filename)
-        file_reader = csv.reader(open_file)
-        for row in file_reader:
-            self.word_list.append(row)
+        if os.path.exists(filename):
+            open_file = open(filename)
+            file_reader = csv.reader(open_file)
+            for row in file_reader:
+                self.word_list.append(row)
 
     def create_new(self):
         '''
@@ -168,11 +173,10 @@ class WordClip(tkinter.LabelFrame):
         ファイルの存在確認を追加
         '''
         filename = os.path.join(os.getcwd(), 'word_list.csv')
-        if os.path.exists(filename):
-            open_file = open(filename, 'w', newline='')
-            output_writer = csv.writer(open_file)
-            for words in self.word_list:
-                output_writer.writerow(words)
+        open_file = open(filename, 'w', newline='')
+        output_writer = csv.writer(open_file)
+        for words in self.word_list:
+            output_writer.writerow(words)
 
     def destroy_widgets(self):
         for d in self.widget_list:
