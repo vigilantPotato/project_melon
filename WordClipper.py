@@ -10,7 +10,7 @@ import pyperclip
 import webbrowser
 import os
 import csv
-import tkinter.simpledialog #new
+import tkinter.simpledialog
 
 class WordClip(tkinter.LabelFrame):
     '''
@@ -62,10 +62,6 @@ class WordClip(tkinter.LabelFrame):
         #deleteチェックボタンを生成
         self.var = tkinter.IntVar()
         self.check_button(title='delete button', var=self.var)
-
-        #swapチェックボタンを生成
-        self.var2 = tkinter.IntVar()
-        self.check_button(title='swap button', var=self.var2)
 
     def word_clip(self, event):
         '''
@@ -163,29 +159,25 @@ class WordClip(tkinter.LabelFrame):
                 del self.word_list[i]
                 break
         self.renew_CSV()
-
         self.destroy_widgets()
         self.create_widgets()
-
-    def swap_clip_button(self, title):
-        pass
 
     def renew_CSV(self):
         '''
         word_listをCSVファイルに保存するメソッド
+        ファイルの存在確認を追加
         '''
         filename = os.path.join(os.getcwd(), 'word_list.csv')
-        open_file = open(filename, 'w', newline='')
-        output_writer = csv.writer(open_file)
-        for words in self.word_list:
-            output_writer.writerow(words)
-        open_file.close()
+        if os.path.exists(filename):
+            open_file = open(filename, 'w', newline='')
+            output_writer = csv.writer(open_file)
+            for words in self.word_list:
+                output_writer.writerow(words)
 
     def destroy_widgets(self):
         for d in self.widget_list:
             d.destroy()
         self.widget_list = []
-
 
 if __name__ == '__main__':
     root = tkinter.Tk()
