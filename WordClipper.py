@@ -49,11 +49,8 @@ class WordClip(tkinter.LabelFrame):
         ボタンウィジェットを生成
         ボタンを押すと、word_clipメソッドを実行
         '''
-
-        #word_list, widget_listのクリア
         self.word_list = []
         self.widget_list = []
-
         self.get_word_list()
 
         #word_listに登録されたボタンを生成
@@ -64,8 +61,41 @@ class WordClip(tkinter.LabelFrame):
         self.button_widget('create new', bg='lightyellow')
 
         #deleteチェックボタンを生成
-        self.var = tkinter.IntVar()
-        self.check_button(title='delete button', var=self.var)
+        self.var = tkinter.BooleanVar()
+        self.delete_check = tkinter.Checkbutton(self, text='delete button', variable=self.var)
+        self.widget_list.append(self.delete_check)
+        self.delete_check.pack(anchor=tkinter.W, padx=5)
+
+        #swapチェックボタンを生成
+        self.var_s = tkinter.BooleanVar()
+        self.swap_check= tkinter.Checkbutton(self, text='swap button', var=self.var_s, command=self.swap_checked)
+        self.swap_check.bind("<ButtonRelease-1>")
+        self.widget_list.append(self.swap_check)
+        self.swap_check.pack(anchor=tkinter.W, padx=5)
+
+    def swap_checked(self):
+        self.swap_list=[]
+        if self.var_s.get() == True:
+            self.delete_check.config(state='disable')
+        else:
+            self.delete_check.config(state='active')
+
+    def swap_buttons(self, text):
+        if text == 'create new':
+            return
+        
+        self.swap_list.append(text)
+        if len(self.swap_list) == 2:
+            for i, word in enumerate(self.word_list):
+                if word[0] == self.swap_list[0]:
+                    swap1 = i
+                if word[0] == self.swap_list[1]:
+                    swap2 = i
+            self.word_list[swap1], self.word_list[swap2] =self.word_list[swap2], self.word_list[swap1]
+            self.delete_check.config(state='active')
+            self.renew_CSV()
+            self.destroy_widgets()
+            self.create_widgets()
 
     def word_clip(self, event):
         '''
@@ -78,10 +108,15 @@ class WordClip(tkinter.LabelFrame):
         '''
 
         #deleteチェックボタンにチェックが入っている場合
-        if self.var.get() == 1:
+        if self.var.get() == True:
             self.delete_clip_button(event.widget["text"])
             return
-        
+
+        #swapチェックボタンにチェックが入っている場合
+        if self.var_s.get() == True:
+            self.swap_buttons(event.widget["text"])
+            return
+
         #create newボタンを押した場合
         if event.widget["text"] == 'create new':
             self.create_new()
@@ -147,14 +182,6 @@ class WordClip(tkinter.LabelFrame):
         b.pack()
         self.widget_list.append(b)
     
-    def check_button(self, title, var, command=None):
-        '''
-        チェックボタンウィジェットを生成するメソッド
-        '''
-        check = tkinter.Checkbutton(self, text=title, variable=var, command=command)
-        check.pack(anchor=tkinter.W, padx=5)
-        self.widget_list.append(check)
-
     def delete_clip_button(self, title):
         '''
         CSVファイルからtitleと一致する行を削除しするメソッド
