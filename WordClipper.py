@@ -55,10 +55,14 @@ class WordClip(tkinter.LabelFrame):
 
         #word_listに登録されたボタンを生成
         for word in self.word_list:
-            self.button_widget(word[0])
+            if word[2] == 'nolink':
+                bg = 'lightgreen'
+            else:
+                bg = 'light blue'
+            self.button_widget(word[0], bg=bg)
         
         #create_newボタンを生成
-        self.button_widget('create new', bg='lightyellow')
+        self.button_widget('- create new -', bg='lightyellow')
 
         #deleteチェックボタンを生成
         self.var = tkinter.BooleanVar()
@@ -119,14 +123,16 @@ class WordClip(tkinter.LabelFrame):
             return
 
         #create newボタンを押した場合
-        if event.widget["text"] == 'create new':
+        if event.widget["text"] == '- create new -':
             self.create_new()
             return
         
         #クリップボタンを押した場合
         for title in self.word_list:
             if title[0] == event.widget["text"]:
-                pyperclip.copy(title[1])
+                #noclip以外の時、文字列をコピー
+                if title[1] != 'noclip':
+                    pyperclip.copy(title[1])
                 #nolink以外のとき、アドレスをブラウザで開く
                 if title[2] != 'nolink':
                     webbrowser.open(title[2])
@@ -151,13 +157,13 @@ class WordClip(tkinter.LabelFrame):
 
         #タイトルを入力
         title = tkinter.simpledialog.askstring('input title', 'please input title')
-        if(title == ''):
+        if(title == None or title == ''):
             return
 
         #コピーする文字列を入力
         clip_word = tkinter.simpledialog.askstring('input clipword', 'please input clipword')
-        if(clip_word == ''):
-            return
+        if(clip_word == None or clip_word == ''):
+            clip_word = 'noclip'
         
         #リンク先を入力
         link = tkinter.simpledialog.askstring('input URL', 'please input URL')
