@@ -75,6 +75,7 @@ class WordClip(tkinter.LabelFrame):
 
     def swap_checked(self):
         self.swap_list=[]
+        self.var.set(False)
         if self.var_s.get() == True:
             self.delete_check.config(state='disable')
         else:
@@ -177,7 +178,7 @@ class WordClip(tkinter.LabelFrame):
         '''
         ボタンウィジェットを生成するメソッド
         '''
-        b = tkinter.Button(self, text=title, width=20, bg=bg)
+        b = tkinter.Button(self, text=title, bg=bg, width=15)
         b.bind("<ButtonRelease-1>", self.word_clip)
         b.pack()
         self.widget_list.append(b)
@@ -213,6 +214,9 @@ class WordClip(tkinter.LabelFrame):
 if __name__ == '__main__':
     root = tkinter.Tk()
     root.title('WordClipper')
+    x = 155
+    w = root.winfo_screenwidth()
+    root.geometry('+%d+%d' % (w-x, 0))
     app = WordClip(master=root)
-    app.pack()
+    app.grid(row=0, column=0, padx=5, pady=5, ipadx=5, ipady=5)
     root.mainloop()
